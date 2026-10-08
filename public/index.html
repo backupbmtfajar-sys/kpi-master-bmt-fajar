@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI Marketing | BMT Fajar</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div id="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">◢</div>
+        <div><strong>BMT FAJAR</strong><span>Sistem KPI Marketing</span></div>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="dashboard">⌂ <span>Dashboard</span></button>
+        <div class="nav-group">
+          <button class="nav-item nav-parent" data-toggle="ao">♙ <span>Account Officer</span><b>⌄</b></button>
+          <div class="submenu" id="ao-menu">
+            <button data-view="ao-trend">Tren Bulanan Officer</button>
+            <button data-view="ao-compare">Komparasi Sisi ke Sisi</button>
+            <button data-view="ao-matrix">Matriks AO</button>
+          </div>
+        </div>
+        <div class="nav-group">
+          <button class="nav-item nav-parent" data-toggle="fo">▣ <span>Funding Officer</span><b>⌄</b></button>
+          <div class="submenu" id="fo-menu">
+            <button data-view="fo-trend">Tren Bulanan Officer</button>
+            <button data-view="fo-compare">Komparasi Sisi ke Sisi</button>
+            <button data-view="fo-matrix">Matriks FO</button>
+          </div>
+        </div>
+        <div class="nav-group">
+          <button class="nav-item nav-parent" data-toggle="target">▤ <span>Target</span><b>⌄</b></button>
+          <div class="submenu" id="target-menu">
+            <button data-view="target-ao">Target AO</button>
+            <button data-view="target-fo">Target FO</button>
+          </div>
+        </div>
+        <button class="nav-item logout" id="logoutBtn">⇥ <span>Logout</span></button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="mobile-title">KPI Marketing</div>
+        <div class="period-control">
+          <span>▣</span>
+          <label>Periode
+            <select id="globalPeriod">
+              <option value="month:1">Januari 2026</option>
+              <option value="month:2">Februari 2026</option>
+              <option value="month:3">Maret 2026</option>
+              <option value="month:4">April 2026</option>
+              <option value="month:5">Mei 2026</option>
+              <option value="month:6">Juni 2026</option>
+              <option value="month:7">Juli 2026</option>
+              <option value="month:8">Agustus 2026</option>
+              <option value="month:9">September 2026</option>
+              <option value="month:10">Oktober 2026</option>
+              <option value="month:11">November 2026</option>
+              <option value="month:12">Desember 2026</option>
+              <option value="quarter:1" selected>Triwulan I (Jan - Mar 2026)</option>
+              <option value="quarter:2">Triwulan II (Apr - Jun 2026)</option>
+              <option value="quarter:3">Triwulan III (Jul - Sep 2026)</option>
+            </select>
+          </label>
+        </div>
+        <div class="profile">
+          <div class="avatar">A</div>
+          <div><strong id="adminName">Admin</strong><small>Administrator</small></div>
+          <button id="profileBtn">⌄</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div id="toast" class="toast"></div>
+
+        <!-- Dashboard -->
+        <section class="view active" id="view-dashboard">
+          <div class="welcome">
+            <div><div class="hello">👋 <strong>Selamat Datang, Admin</strong></div><p>Sistem Informasi KPI Marketing - BMT Fajar</p></div>
+          </div>
+          <div class="cards">
+            <div class="kpi-card blue"><span class="card-icon">♟</span><div><small>Total Marketing AO</small><strong id="cardAo">0 <em>orang</em></strong><p>↑ <span>Aktif</span></p></div></div>
+            <div class="kpi-card green"><span class="card-icon">♟</span><div><small>Total Marketing FO</small><strong id="cardFo">0 <em>orang</em></strong><p>↑ <span>Aktif</span></p></div></div>
+            <div class="kpi-card orange"><span class="card-icon">◉</span><div><small>Total Outstanding AO</small><strong id="cardOsAo">Rp 0</strong><p>↑ <span>Periode terpilih</span></p></div></div>
+            <div class="kpi-card purple"><span class="card-icon">◉</span><div><small>Total Outstanding FO</small><strong id="cardOsFo">Rp 0</strong><p>↑ <span>Periode terpilih</span></p></div></div>
+          </div>
+
+          <div class="grid dashboard-grid">
+            <div class="panel chart-panel">
+              <div class="panel-head"><h3>Total Bonus KPI AO</h3><select id="bonusAoPeriod" class="mini-select"><option value="quarter:1">Triwulan I</option><option value="quarter:2">Triwulan II</option><option value="quarter:3">Triwulan III</option><option value="year">Tahunan</option></select></div>
+              <canvas id="bonusAoChart"></canvas>
+            </div>
+            <div class="panel chart-panel">
+              <div class="panel-head"><h3>Total Bonus KPI FO</h3><select id="bonusFoPeriod" class="mini-select"><option value="quarter:1">Triwulan I</option><option value="quarter:2">Triwulan II</option><option value="quarter:3">Triwulan III</option><option value="year">Tahunan</option></select></div>
+              <canvas id="bonusFoChart"></canvas>
+            </div>
+            <div class="panel compare-panel">
+              <div class="panel-head"><h3>Komparasi Sisi ke Sisi Marketing</h3></div>
+              <div class="filters four">
+                <label>Tahun<select id="dashCompareYear"><option>2026</option></select></label>
+                <label>Jenis<select id="dashCompareType"><option value="AO">AO</option><option value="FO">FO</option></select></label>
+                <label>Marketing A<select id="dashCompareA"></select></label>
+                <label>Marketing B<select id="dashCompareB"></select></label>
+              </div>
+              <div class="compare-title" id="dashCompareTitle">Perbandingan Semua Indikator KPI</div>
+              <canvas id="dashCompareChart"></canvas>
+            </div>
+          </div>
+
+          <div class="grid lower-grid">
+            <div class="panel table-panel">
+              <div class="panel-head"><h3>▤ Rekening Koran Marketing</h3><div class="inline-filters"><select id="matrixYear"><option>2026</option></select><select id="matrixType"><option value="ALL">Semua Jabatan</option><option value="AO">AO</option><option value="FO">FO</option></select><input id="matrixSearch" placeholder="⌕ Cari nama..."></div></div>
+              <div class="table-wrap"><table id="marketingTable"><thead><tr><th>No</th><th>Nama</th><th>Jabatan</th><th>Cabang</th><th>Masa Kerja</th><th>Kategori</th><th>Outstanding</th><th>Target Pencairan</th><th>Realisasi (MTD)</th><th>Capaian</th></tr></thead><tbody></tbody></table></div>
+              <div class="table-foot"><span id="tableInfo">Menampilkan 0 data</span><div class="pagination" id="pagination"></div></div>
+            </div>
+            <div class="side-stack">
+              <div class="panel">
+                <div class="panel-head"><h3>🎯 Target AO <small>(Berdasarkan Kategori Outstanding)</small></h3></div>
+                <div class="table-wrap"><table id="targetAoMini"><thead><tr><th>Kategori</th><th>Min Outstanding</th><th>Max Outstanding</th><th>Target Pencairan</th></tr></thead><tbody></tbody></table></div>
+              </div>
+              <div class="panel">
+                <div class="panel-head"><h3>🎯 Target FO</h3></div>
+                <div class="table-wrap"><table id="targetFoMini"><thead><tr><th>Indikator</th><th>Target</th></tr></thead><tbody></tbody></table></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <div class="panel chart-panel small"><div class="panel-head"><h3>♙ Tren NPF AO</h3><select id="miniAo"><option>Agus</option></select></div><canvas id="miniAoChart"></canvas></div>
+            <div class="panel chart-panel small"><div class="panel-head"><h3>♧ Tren Fresh Fund Tabungan FO</h3><select id="miniFo"><option>Budi</option></select></div><canvas id="miniFoChart"></canvas></div>
+          </div>
+        </section>
+
+        <!-- Generic views -->
+        <section class="view" id="view-ao-trend"></section>
+        <section class="view" id="view-ao-compare"></section>
+        <section class="view" id="view-ao-matrix"></section>
+        <section class="view" id="view-fo-trend"></section>
+        <section class="view" id="view-fo-compare"></section>
+        <section class="view" id="view-fo-matrix"></section>
+        <section class="view" id="view-target-ao"></section>
+        <section class="view" id="view-target-fo"></section>
+      </section>
+    </main>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>

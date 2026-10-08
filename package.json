@@ -1,0 +1,9 @@
+{
+  "name": "kpi-master-bmt-fajar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistem KPI Marketing BMT Fajar - Netlify + Google Sheets",
+  "dependencies": {
+    "googleapis": "^144.0.0"
+  }
+}
