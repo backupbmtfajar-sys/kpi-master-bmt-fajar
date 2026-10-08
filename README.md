@@ -48,3 +48,6 @@ GOOGLE_SPREADSHEET_ID
 SESSION_SECRET
 
 `SESSION_SECRET` bukan password pengguna; ini hanya kunci teknis untuk sesi login dan disimpan di Netlify Environment Variables.
+Netlify redeploy
+
+
