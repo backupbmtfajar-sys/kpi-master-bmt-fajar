@@ -17,10 +17,53 @@ async function sheets(){
  const auth=new google.auth.GoogleAuth({credentials:{client_email:process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,private_key:(process.env.GOOGLE_PRIVATE_KEY||"").replace(/\\n/g,"\n")},scopes:["https://www.googleapis.com/auth/spreadsheets.readonly"]});
  const client=await auth.getClient();return google.sheets({version:"v4",auth:client});
 }
-async function getSheet(s,id,name){
- const r=await s.spreadsheets.values.get({spreadsheetId:id,range:`${name}!A:Z`});
- const rows=r.data.values||[];const headers=rows.shift()||[];
- return rows.map(row=>Object.fromEntries(headers.map((h,i)=>[h,row[i]??""])));
+
+async function getSheet(s, id, name) {
+  const isTargetFO = name === "06_TARGET_FO";
+
+  const range = isTargetFO
+    ? `${name}!A2:B8`
+    : `${name}!A:Z`;
+
+  const r = await s.spreadsheets.values.get({
+    spreadsheetId: id,
+    range
+  });
+
+  const rows = r.data.values || [];
+
+  // Khusus TARGET FO:
+  // Kolom A = nama indikator
+  // Kolom B = nilai target
+  if (isTargetFO) {
+    return rows
+      .filter(row => row[0] && String(row[0]).trim() !== "")
+      .map(row => ({
+        Indikator: String(row[0]).trim(),
+        Target: row[1] ?? ""
+      }));
+  }
+
+  // Sheet lainnya menggunakan baris pertama sebagai header
+  const headers = rows.shift() || [];
+
+  return rows.map(row =>
+    Object.fromEntries(
+      headers.map((header, i) => [header, row[i] ?? ""])
+    )
+  );
+}
+
+
+  
+  // Sheet lainnya: baris pertama berisi header kolom.
+  const headers = rows.shift() || [];
+
+  return rows.map(row =>
+    Object.fromEntries(
+      headers.map((header, i) => [header, row[i] ?? ""])
+    )
+  );
 }
 export async function handler(event){
  const user=userFromEvent(event);if(!user)return {statusCode:401,body:JSON.stringify({message:"Sesi tidak valid."})};
