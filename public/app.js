@@ -76,13 +76,75 @@ function renderBonusCharts(months){
  state.charts.bonusFo=new Chart($('bonusFoChart'),{type:'bar',data:{labels,datasets:[{label:'Realisasi',data:fo,borderRadius:5,backgroundColor:'#8665dc'},{type:'line',label:'Trend',data:fo,borderColor:'#6948bf',pointRadius:3}]},options:chartOptions(true)});
 }
 function chartOptions(currency=false){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9}}},tooltip:{callbacks:{label:c=>currency?rupiah(c.raw):c.raw}}},scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{beginAtZero:true,ticks:{font:{size:8},callback:v=>currency?rupiah(v):v}}}}}
+function formatMetricValue(metric, value) {
+  const name = String(metric || "").toLowerCase();
+  const n = Number(value);
+
+  if (!Number.isFinite(n)) return "-";
+
+  // Indikator berbentuk rupiah
+  if (/pencairan|outstanding|net.?growth|bonus|uang.?jalan|saldo|fresh.?fund/i.test(name)) {
+    return rupiah(n);
+  }
+
+  // Indikator berbentuk persentase
+  if (/npf|collection.?rate|dokumen.?lengkap|persen|%/i.test(name)) {
+    const percent = Math.abs(n) <= 1 ? n * 100 : n;
+    return `${percent.toLocaleString("id-ID", {
+      maximumFractionDigits: 2
+    })}%`;
+  }
+
+  // Indikator berbentuk jumlah orang atau kunjungan
+  if (/anggota.?baru|visit|kunjungan/i.test(name)) {
+    return `${n.toLocaleString("id-ID", {
+      maximumFractionDigits: 2
+    })} orang/kali`;
+  }
+
+  return n.toLocaleString("id-ID", {
+    maximumFractionDigits: 2
+  });
+}
+
 function renderDashCompare(){
  const type=$('dashCompareType').value;const a=$('dashCompareA').value,b=$('dashCompareB').value;
  const rows=type==='AO'?state.data.kpiAo:state.data.kpiFo;
  const metrics=type==='AO'?['Pencairan','Anggota Baru','Net Growth','NPF','Collection','Dokumen','Visit','Outstanding','TotalBonus']:['Outstanding','RataRataSaldoWadiah','RataRataSaldoSimpananBasil','Visit','Anggota Baru','FreshFundTabungan','FreshFundSimpananBasil','TotalBonus'];
  const labels=type==='AO'?['Pencairan','Anggota Baru','Net Growth','NPF','Collection','Dokumen','Visit','Outstanding','Bonus']:['Outstanding','Avg Wadiah','Avg Basil','Visit','Anggota Baru','Fresh Fund Tab','Fresh Fund Basil','Bonus'];
  const vals=id=>metrics.map(m=>{const rr=rows.filter(r=>String(r.ID||r.IDAO||r.IDFO)===String(id));return rr.length?rr.reduce((s,r)=>s+Number(r[m]||0),0)/rr.length:0});
- destroy('dashCompare');state.charts.dashCompare=new Chart($('dashCompareChart'),{type:'bar',data:{labels,datasets:[{label:state.data.employees.find(x=>String(x.ID)===String(a))?.Nama||'A',data:vals(a),backgroundColor:'#2381e3'},{label:state.data.employees.find(x=>String(x.ID)===String(b))?.Nama||'B',data:vals(b),backgroundColor:'#8665dc'}]},options:chartOptions(false)});
+ destroy('dashCompare');
+
+const dashOptions = chartOptions(false);
+
+dashOptions.plugins.tooltip.callbacks.label = c => {
+  const metric = labels[c.dataIndex] || 'Indikator';
+  return `${c.dataset.label}: ${formatMetricValue(metric, c.raw)}`;
+};
+
+state.charts.dashCompare = new Chart($('dashCompareChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: state.data.employees.find(
+          x => String(x.ID) === String(a)
+        )?.Nama || 'A',
+        data: vals(a),
+        backgroundColor: '#2381e3'
+      },
+      {
+        label: state.data.employees.find(
+          x => String(x.ID) === String(b)
+        )?.Nama || 'B',
+        data: vals(b),
+        backgroundColor: '#8665dc'
+      }
+    ]
+  },
+  options: dashOptions
+});
 }
 function renderMarketingTable(){
  const type=$('matrixType').value, q=($('matrixSearch').value||'').toLowerCase();
