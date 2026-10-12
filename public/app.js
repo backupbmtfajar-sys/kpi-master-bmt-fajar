@@ -153,7 +153,7 @@ function renderMarketingTable(){
  $('marketingTable').querySelector('tbody').innerHTML=rows.join('')||'<tr><td colspan="10" class="empty">Data tidak ditemukan</td></tr>';$('tableInfo').textContent=`Menampilkan 1 - ${list.length} dari ${list.length} data`;
 }
 function renderTargetsMini(){
- $('targetAoMini').querySelector('tbody').innerHTML=state.data.targetAo.map(t=>`<tr><td>${t.Kategori}</td><td>${rupiah(t.MinOutstanding)}</td><td>${Number(t.MaxOutstanding)>=999999999999?'-':rupiah(t.MaxOutstanding)}</td><td>${rupiah(t.TargetPencairan)}</td><td>${Number(t.AnggotaBaru)}</td></tr>`).join('');
+ $('targetAoMini').querySelector('tbody').innerHTML=state.data.targetAo.map(t=>`<tr><td>${t.Kategori}</td><td>${rupiah(t.TargetPencairan)}</td><td>${Number(t.AnggotaBaru)}</td><td>${rupiah(t.NetGrowth)}</td><td>${Percent(t.NPF)}</td></tr>`).join('');
  $('targetFoMini').querySelector('tbody').innerHTML=state.data.targetFo.map(t=>`<tr><td>${t.Indikator}</td><td>${Number(t.Target||0)===0?'0 / Tidak Ada':t.Target}</td></tr>`).join('');
 }
 function renderMiniCharts(){
