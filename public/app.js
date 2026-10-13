@@ -69,10 +69,14 @@ function renderDashboard(){
 }
 function renderBonusCharts(months){
  const labels=months.map(m=>monthNames[m-1]);
- const ao=months.map(m=>state.data.kpiAo.filter(r=>Number(r.Bulan)===m).reduce((s,r)=>s+Number(r.TotalBonus||r.Bonus||0),0));
+ 
+const ao=months.map(m=>state.data.kpiAo.filter(r=>Number(r.Bulan)===m).reduce((s,r)=>s+Number(r.TotalBonus||r.Bonus||0),0));
+const uangJalanAo=months.map(m=>state.data.kpiAo.filter(r=>Number(r.Bulan)===m).reduce((s,r)=>s+Number(r.UangJalan||0),0));
+
  const fo=months.map(m=>state.data.kpiFo.filter(r=>Number(r.Bulan)===m).reduce((s,r)=>s+Number(r.TotalBonus||r.Bonus||0),0));
  destroy('bonusAo');destroy('bonusFo');
  state.charts.bonusAo=new Chart($('bonusAoChart'),{type:'bar',data:{labels,datasets:[{label:'Realisasi',data:ao,borderRadius:5,backgroundColor:'#2f83e6'},{type:'line',label:'Trend',data:ao,borderColor:'#166dcc',pointRadius:3}]},options:chartOptions(true)});
+ state.charts.bonusAo=new Chart($('bonusAoChart'),{type:'bar',data:{labels,datasets:[{label:'Bonus AO',data:ao,borderRadius:5,backgroundColor:'#2f83e6'},{label:'Uang Jalan AO',data:uangJalanAo,borderRadius:5,backgroundColor:'#20b486'},{type:'line',label:'Trend Bonus AO',data:ao,borderColor:'#166dcc',pointRadius:3}]},options:chartOptions(true)});
  state.charts.bonusFo=new Chart($('bonusFoChart'),{type:'bar',data:{labels,datasets:[{label:'Realisasi',data:fo,borderRadius:5,backgroundColor:'#8665dc'},{type:'line',label:'Trend',data:fo,borderColor:'#6948bf',pointRadius:3}]},options:chartOptions(true)});
 }
 function chartOptions(currency=false){return {responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9}}},tooltip:{callbacks:{label:c=>currency?rupiah(c.raw):c.raw}}},scales:{x:{grid:{display:false},ticks:{font:{size:8}}},y:{beginAtZero:true,ticks:{font:{size:8},callback:v=>currency?rupiah(v):v}}}}}
